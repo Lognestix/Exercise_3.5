@@ -23,6 +23,13 @@ public class Smartphone extends Product {
   }
 
   @Override
+  public boolean matches(String search) {
+    //Вызов родительского метода
+    //Проверка на наличие поискового слова в данных о производителе
+    return super.matches(search) || getManufacturer().contains(search);
+  }
+
+  @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;

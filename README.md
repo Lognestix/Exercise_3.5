@@ -105,6 +105,13 @@ public class Product {
     this.price = price;
   }
 
+  public boolean matches(String search) {
+    if (getName().contains(search)) { //Проверка на наличие поискового слова в данных названия
+      return true;
+    }
+    return false;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -156,6 +163,17 @@ public class Book extends Product {
   }
 
   @Override
+  public boolean matches(String search) {
+    if (super.matches(search)) { //Вызов родительского метода
+      return true;
+    }
+    if (getAuthor().contains(search)) { //Проверка на наличие поискового слова в данных об авторе
+      return true;
+    }
+    return false;
+  }
+
+  @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
@@ -203,6 +221,13 @@ public class Smartphone extends Product {
   }
 
   @Override
+  public boolean matches(String search) {
+    //Вызов родительского метода
+    //Проверка на наличие поискового слова в данных о производителе
+    return super.matches(search) || getManufacturer().contains(search);
+  }
+
+  @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
@@ -228,8 +253,6 @@ public class Smartphone extends Product {
 package ru.netology.manager;
 
 import ru.netology.domain.Product;
-import ru.netology.domain.Book;
-import ru.netology.domain.Smartphone;
 import ru.netology.repository.ProductRepository;
 
 public class ProductManager {
@@ -245,7 +268,7 @@ public class ProductManager {
     Product[] products = repository.findAll();
     Product[] result = new Product[0];
     for (Product product : products) {
-      if (matches(product, text) == true) {
+      if (product.matches(text)) {
         int length = result.length + 1;
         Product[] tmp = new Product[length];
         System.arraycopy(result, 0, tmp, 0, result.length);
@@ -266,28 +289,11 @@ public class ProductManager {
     }
     return result;
   }
-
-  public boolean matches(Product product, String search) {
-    if (product instanceof Book) { //Если в параметре product лежит объект класса Book,
-      Book book = (Book) product; //то он ложится в переменную типа Book чтобы пользоваться методами класса Book.
-      if (book.getAuthor().contains(search)) { //Проверка на наличие поискового слова в данных об авторе
-        return true;
-      }
-    }
-    if (product instanceof Smartphone) { //Если в параметре product лежит объект класса Smartphone,
-      Smartphone smartphone = (Smartphone) product; //то он ложится в переменную типа Smartphone чтобы пользоваться методами класса Smartphone.
-      if (smartphone.getManufacturer().contains(search)) { //Проверка на наличие поискового слова в данных о производителе
-        return true;
-      }
-    }
-    return false;
-  }
 }
 ```
 ```Java
 package ru.netology.manager;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.netology.domain.Book;
 import ru.netology.domain.Product;
@@ -311,8 +317,8 @@ class ProductManagerTest {
     private final Smartphone sixth = new Smartphone(6, "Galaxy Z Flip 3 ", 95_500, "Samsung");
     private final Smartphone seventh = new Smartphone(7, "iPhone 13 Pro", 107_500, "Apple");
 
-    @BeforeEach
-    public void SetUp() {
+    @Test   //Тест функции поиска менеджера продуктов
+    public void shouldSearchBy() {
         productManager.addProduct(zero);
         productManager.addProduct(first);
         productManager.addProduct(second);
@@ -321,10 +327,7 @@ class ProductManagerTest {
         productManager.addProduct(fifth);
         productManager.addProduct(sixth);
         productManager.addProduct(seventh);
-    }
 
-    @Test
-    public void shouldSearchBy() {
         Product[] actualSeveralValues = productManager.searchBy("Samsung");
         Product[] expectedSeveralValues = { sixth, fifth, fourth };
         assertArrayEquals(expectedSeveralValues, actualSeveralValues, "Несколько найденных значений");
@@ -335,6 +338,45 @@ class ProductManagerTest {
 
         Product[] actualNoValue = productManager.searchBy("Носки");
         assertArrayEquals(null, actualNoValue, "Не найденное значение");
+    }
+
+    @Test   //Unit-тест логики класса Product
+    public void shouldProductMatches() {
+        Product product = new Product(2, "Изгой", 3_500);
+
+        boolean actualValue = product.matches("Изгой");
+        assertTrue(actualValue, "Существующее значение");
+
+        boolean actualNolValue = product.matches("Юпитер");
+        assertFalse(actualNolValue, "Не существующее значение");
+    }
+
+    @Test   //Unit-тест логики класса Book
+    public void shouldBookMatches() {
+        Book book = new Book(3, "Лабиринт отражений", 3_400, "Сергей Лукьяненко");
+
+        boolean actualSuperValue = book.matches("Лабиринт отражений");
+        assertTrue(actualSuperValue, "Существующее значение в родителе");
+
+        boolean actualValue = book.matches("Лукьяненко");
+        assertTrue(actualValue, "Существующее значение");
+
+        boolean actualNolValue = book.matches("Юпитер");
+        assertFalse(actualNolValue, "Не существующее значение");
+    }
+
+    @Test   //Unit-тест логики класса Smartphone
+    public void shouldSmartphoneMatches() {
+        Smartphone smartphone = new Smartphone(5, "Galaxy A72", 33_500, "Samsung");
+
+        boolean actualSuperValue = smartphone.matches("Galaxy A72");
+        assertTrue(actualSuperValue, "Существующее значение в родителе");
+
+        boolean actualValue = smartphone.matches("Samsung");
+        assertTrue(actualValue, "Существующее значение");
+
+        boolean actualNolValue = smartphone.matches("Юпитер");
+        assertFalse(actualNolValue, "Не существующее значение");
     }
 }
 ```

@@ -23,6 +23,17 @@ public class Book extends Product {
   }
 
   @Override
+  public boolean matches(String search) {
+    if (super.matches(search)) { //Вызов родительского метода
+      return true;
+    }
+    if (getAuthor().contains(search)) { //Проверка на наличие поискового слова в данных об авторе
+      return true;
+    }
+    return false;
+  }
+
+  @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;

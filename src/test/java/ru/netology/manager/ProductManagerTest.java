@@ -1,6 +1,5 @@
 package ru.netology.manager;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.netology.domain.Book;
 import ru.netology.domain.Product;
@@ -24,8 +23,8 @@ class ProductManagerTest {
     private final Smartphone sixth = new Smartphone(6, "Galaxy Z Flip 3 ", 95_500, "Samsung");
     private final Smartphone seventh = new Smartphone(7, "iPhone 13 Pro", 107_500, "Apple");
 
-    @BeforeEach
-    public void SetUp() {
+    @Test   //Тест функции поиска менеджера продуктов
+    public void shouldSearchBy() {
         productManager.addProduct(zero);
         productManager.addProduct(first);
         productManager.addProduct(second);
@@ -34,10 +33,7 @@ class ProductManagerTest {
         productManager.addProduct(fifth);
         productManager.addProduct(sixth);
         productManager.addProduct(seventh);
-    }
 
-    @Test
-    public void shouldSearchBy() {
         Product[] actualSeveralValues = productManager.searchBy("Samsung");
         Product[] expectedSeveralValues = { sixth, fifth, fourth };
         assertArrayEquals(expectedSeveralValues, actualSeveralValues, "Несколько найденных значений");
@@ -48,5 +44,44 @@ class ProductManagerTest {
 
         Product[] actualNoValue = productManager.searchBy("Носки");
         assertArrayEquals(null, actualNoValue, "Не найденное значение");
+    }
+
+    @Test   //Unit-тест логики класса Product
+    public void shouldProductMatches() {
+        Product product = new Product(2, "Изгой", 3_500);
+
+        boolean actualValue = product.matches("Изгой");
+        assertTrue(actualValue, "Существующее значение");
+
+        boolean actualNolValue = product.matches("Юпитер");
+        assertFalse(actualNolValue, "Не существующее значение");
+    }
+
+    @Test   //Unit-тест логики класса Book
+    public void shouldBookMatches() {
+        Book book = new Book(3, "Лабиринт отражений", 3_400, "Сергей Лукьяненко");
+
+        boolean actualSuperValue = book.matches("Лабиринт отражений");
+        assertTrue(actualSuperValue, "Существующее значение в родителе");
+
+        boolean actualValue = book.matches("Лукьяненко");
+        assertTrue(actualValue, "Существующее значение");
+
+        boolean actualNolValue = book.matches("Юпитер");
+        assertFalse(actualNolValue, "Не существующее значение");
+    }
+
+    @Test   //Unit-тест логики класса Smartphone
+    public void shouldSmartphoneMatches() {
+        Smartphone smartphone = new Smartphone(5, "Galaxy A72", 33_500, "Samsung");
+
+        boolean actualSuperValue = smartphone.matches("Galaxy A72");
+        assertTrue(actualSuperValue, "Существующее значение в родителе");
+
+        boolean actualValue = smartphone.matches("Samsung");
+        assertTrue(actualValue, "Существующее значение");
+
+        boolean actualNolValue = smartphone.matches("Юпитер");
+        assertFalse(actualNolValue, "Не существующее значение");
     }
 }
