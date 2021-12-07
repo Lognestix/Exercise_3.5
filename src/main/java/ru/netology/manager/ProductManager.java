@@ -25,16 +25,6 @@ public class ProductManager {
         result = tmp;
       }
     }
-    if (result.length > 0) {
-      Product[] tmp = new Product[result.length];
-      for (int cycle = 0; cycle < result.length; cycle++) {
-        int index = result.length - cycle - 1;
-        tmp[cycle] = result[index];
-      }
-      result = tmp;
-    } else {
-      result = null;
-    }
     return result;
   }
 }

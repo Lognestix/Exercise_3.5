@@ -53,8 +53,8 @@ public class Product {
     if (o == null || getClass() != o.getClass()) return false;
     Product product = (Product) o;
     return id == product.id &&
-        price == product.price &&
-        Objects.equals(name, product.name);
+            price == product.price &&
+            Objects.equals(name, product.name);
   }
 
   @Override
@@ -65,9 +65,9 @@ public class Product {
   @Override
   public String toString() {
     return "Product{" +
-        "id=" + id +
-        ", name='" + name + '\'' +
-        ", price=" + price +
-        '}';
+            "id=" + id +
+            ", name='" + name + '\'' +
+            ", price=" + price +
+            '}';
   }
 }

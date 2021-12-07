@@ -145,16 +145,20 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ProductTest {
+    //Общие данные:
+    private final Product product = new Product(2, "Изгой", 3_500);
 
-    @Test   //Unit-тест логики класса Product
-    public void shouldProductMatches() {
-        Product product = new Product(2, "Изгой", 3_500);
+    //Unit-тесты логики класса Product
+    @Test
+    public void shouldProductMatchesValue() {
+        boolean actual = product.matches("Изгой");
+        assertTrue(actual, "Существующее значение");
+    }
 
-        boolean actualValue = product.matches("Изгой");
-        assertTrue(actualValue, "Существующее значение");
-
-        boolean actualNolValue = product.matches("Юпитер");
-        assertFalse(actualNolValue, "Не существующее значение");
+    @Test
+    public void shouldProductMatchesNolValue() {
+        boolean actual = product.matches("Юпитер");
+        assertFalse(actual, "Не существующее значение");
     }
 }
 ```
@@ -224,19 +228,26 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class BookTest {
+    //Общие данные:
+    private final Book book = new Book(3, "Лабиринт отражений", 3_400, "Сергей Лукьяненко");
 
-    @Test   //Unit-тест логики класса Book
-    public void shouldBookMatches() {
-        Book book = new Book(3, "Лабиринт отражений", 3_400, "Сергей Лукьяненко");
+    //Unit-тесты логики класса Book
+    @Test
+    public void shouldBookMatchesSuperValue() {
+        boolean actual = book.matches("Лабиринт отражений");
+        assertTrue(actual, "Существующее значение в родителе");
+    }
 
-        boolean actualSuperValue = book.matches("Лабиринт отражений");
-        assertTrue(actualSuperValue, "Существующее значение в родителе");
+    @Test
+    public void shouldBookMatchesValue() {
+        boolean actual = book.matches("Лукьяненко");
+        assertTrue(actual, "Существующее значение");
+    }
 
-        boolean actualValue = book.matches("Лукьяненко");
-        assertTrue(actualValue, "Существующее значение");
-
-        boolean actualNolValue = book.matches("Юпитер");
-        assertFalse(actualNolValue, "Не существующее значение");
+    @Test
+    public void shouldBookMatchesValueNolValue() {
+        boolean actual = book.matches("Юпитер");
+        assertFalse(actual, "Не существующее значение");
     }
 }
 ```
@@ -302,19 +313,26 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SmartphoneTest {
+    //Общие данные:
+    private final Smartphone smartphone = new Smartphone(5, "Galaxy A72", 33_500, "Samsung");
 
-    @Test   //Unit-тест логики класса Smartphone
-    public void shouldSmartphoneMatches() {
-        Smartphone smartphone = new Smartphone(5, "Galaxy A72", 33_500, "Samsung");
+    //Unit-тесты логики класса Smartphone
+    @Test
+    public void shouldSmartphoneMatchesSuperValue() {
+        boolean actual = smartphone.matches("Galaxy A72");
+        assertTrue(actual, "Существующее значение в родителе");
+    }
 
-        boolean actualSuperValue = smartphone.matches("Galaxy A72");
-        assertTrue(actualSuperValue, "Существующее значение в родителе");
+    @Test
+    public void shouldSmartphoneMatchesValue() {
+        boolean actual = smartphone.matches("Samsung");
+        assertTrue(actual, "Существующее значение");
+    }
 
-        boolean actualValue = smartphone.matches("Samsung");
-        assertTrue(actualValue, "Существующее значение");
-
-        boolean actualNolValue = smartphone.matches("Юпитер");
-        assertFalse(actualNolValue, "Не существующее значение");
+    @Test
+    public void shouldSmartphoneMatchesNolValue() {
+        boolean actual = smartphone.matches("Юпитер");
+        assertFalse(actual, "Не существующее значение");
     }
 }
 ```
@@ -345,16 +363,6 @@ public class ProductManager {
         tmp[lastIndex] = product;
         result = tmp;
       }
-    }
-    if (result.length > 0) {
-      Product[] tmp = new Product[result.length];
-      for (int cycle = 0; cycle < result.length; cycle++) {
-        int index = result.length - cycle - 1;
-        tmp[cycle] = result[index];
-      }
-      result = tmp;
-    } else {
-      result = null;
     }
     return result;
   }
@@ -388,7 +396,7 @@ class ProductManagerTest {
     private final Smartphone seventh = new Smartphone(7, "iPhone 13 Pro", 107_500, "Apple");
 
     @BeforeEach
-    public void SetUp() {
+    public void setUp() {
         productManager.addProduct(zero);
         productManager.addProduct(first);
         productManager.addProduct(second);
@@ -400,17 +408,31 @@ class ProductManagerTest {
     }
 
     @Test
-    public void shouldSearchBy() {
-        Product[] actualSeveralValues = productManager.searchBy("Samsung");
-        Product[] expectedSeveralValues = { sixth, fifth, fourth };
-        assertArrayEquals(expectedSeveralValues, actualSeveralValues, "Несколько найденных значений");
+    public void shouldSearchBySeveralValues() {
+        Product[] actual = productManager.searchBy("Galaxy");
+        Product[] expected = {fourth, fifth, sixth};
+        assertArrayEquals(expected, actual, "Несколько найденных значений");
+    }
 
-        Product[] actualOneValue = productManager.searchBy("Ефремов");
-        Product[] expectedOneValue = { first };
-        assertArrayEquals(expectedOneValue, actualOneValue, "Одно найденное значение");
+    @Test
+    public void shouldSearchByOneValueBook() {
+        Product[] actual = productManager.searchBy("Ефремов");
+        Product[] expected = {first};
+        assertArrayEquals(expected, actual, "Одно найденное значение книги");
+    }
 
-        Product[] actualNoValue = productManager.searchBy("Носки");
-        assertArrayEquals(null, actualNoValue, "Не найденное значение");
+    @Test
+    public void shouldSearchByOneValueSmartphone() {
+        Product[] actual = productManager.searchBy("Apple");
+        Product[] expected = {seventh};
+        assertArrayEquals(expected, actual, "Одно найденное значение смартфона");
+    }
+
+    @Test
+    public void shouldSearchByNoValue() {
+        Product[] actual = productManager.searchBy("Носки");
+        Product[] expected = new Product[0];
+        assertArrayEquals(expected, actual, "Не найденное значение");
     }
 }
 ```

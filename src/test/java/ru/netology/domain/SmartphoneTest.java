@@ -5,18 +5,25 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SmartphoneTest {
+    //Общие данные:
+    private final Smartphone smartphone = new Smartphone(5, "Galaxy A72", 33_500, "Samsung");
 
-    @Test   //Unit-тест логики класса Smartphone
-    public void shouldSmartphoneMatches() {
-        Smartphone smartphone = new Smartphone(5, "Galaxy A72", 33_500, "Samsung");
+    //Unit-тесты логики класса Smartphone
+    @Test
+    public void shouldSmartphoneMatchesSuperValue() {
+        boolean actual = smartphone.matches("Galaxy A72");
+        assertTrue(actual, "Существующее значение в родителе");
+    }
 
-        boolean actualSuperValue = smartphone.matches("Galaxy A72");
-        assertTrue(actualSuperValue, "Существующее значение в родителе");
+    @Test
+    public void shouldSmartphoneMatchesValue() {
+        boolean actual = smartphone.matches("Samsung");
+        assertTrue(actual, "Существующее значение");
+    }
 
-        boolean actualValue = smartphone.matches("Samsung");
-        assertTrue(actualValue, "Существующее значение");
-
-        boolean actualNolValue = smartphone.matches("Юпитер");
-        assertFalse(actualNolValue, "Не существующее значение");
+    @Test
+    public void shouldSmartphoneMatchesNolValue() {
+        boolean actual = smartphone.matches("Юпитер");
+        assertFalse(actual, "Не существующее значение");
     }
 }
