@@ -24,7 +24,6 @@ class ProductManagerTest {
     private final Smartphone sixth = new Smartphone(6, "Galaxy Z Flip 3 ", 95_500, "Samsung");
     private final Smartphone seventh = new Smartphone(7, "iPhone 13 Pro", 107_500, "Apple");
 
-
     @BeforeEach
     public void SetUp() {
         productManager.addProduct(zero);
