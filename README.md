@@ -245,7 +245,7 @@ public class ProductManager {
     Product[] products = repository.findAll();
     Product[] result = new Product[0];
     for (Product product : products) {
-      if (matches(product, text) == true) {
+      if (matches(product, text)) {
         int length = result.length + 1;
         Product[] tmp = new Product[length];
         System.arraycopy(result, 0, tmp, 0, result.length);
@@ -254,20 +254,13 @@ public class ProductManager {
         result = tmp;
       }
     }
-    if (result.length > 0) {
-      Product[] tmp = new Product[result.length];
-      for (int cycle = 0; cycle < result.length; cycle++) {
-        int index = result.length - cycle - 1;
-        tmp[cycle] = result[index];
-      }
-      result = tmp;
-    } else {
-      result = null;
-    }
     return result;
   }
 
   public boolean matches(Product product, String search) {
+    if (product.getName().contains(search)) { //Проверка на наличие поискового слова в данных о названии
+      return true;
+    }
     if (product instanceof Book) { //Если в параметре product лежит объект класса Book,
       Book book = (Book) product; //то он ложится в переменную типа Book чтобы пользоваться методами класса Book.
       if (book.getAuthor().contains(search)) { //Проверка на наличие поискового слова в данных об авторе
@@ -312,7 +305,7 @@ class ProductManagerTest {
     private final Smartphone seventh = new Smartphone(7, "iPhone 13 Pro", 107_500, "Apple");
 
     @BeforeEach
-    public void SetUp() {
+    public void setUp() {
         productManager.addProduct(zero);
         productManager.addProduct(first);
         productManager.addProduct(second);
@@ -324,17 +317,31 @@ class ProductManagerTest {
     }
 
     @Test
-    public void shouldSearchBy() {
-        Product[] actualSeveralValues = productManager.searchBy("Samsung");
-        Product[] expectedSeveralValues = { sixth, fifth, fourth };
-        assertArrayEquals(expectedSeveralValues, actualSeveralValues, "Несколько найденных значений");
+    public void shouldSearchBySeveralValues() {
+        Product[] actual = productManager.searchBy("Galaxy");
+        Product[] expected = {fourth, fifth, sixth};
+        assertArrayEquals(expected, actual, "Несколько найденных значений");
+    }
 
-        Product[] actualOneValue = productManager.searchBy("Ефремов");
-        Product[] expectedOneValue = { first };
-        assertArrayEquals(expectedOneValue, actualOneValue, "Одно найденное значение");
+    @Test
+    public void shouldSearchByOneValueBook() {
+        Product[] actual = productManager.searchBy("Ефремов");
+        Product[] expected = {first};
+        assertArrayEquals(expected, actual, "Одно найденное значение книги");
+    }
 
-        Product[] actualNoValue = productManager.searchBy("Носки");
-        assertArrayEquals(null, actualNoValue, "Не найденное значение");
+    @Test
+    public void shouldSearchByOneValueSmartphone() {
+        Product[] actual = productManager.searchBy("Apple");
+        Product[] expected = {seventh};
+        assertArrayEquals(expected, actual, "Одно найденное значение смартфона");
+    }
+
+    @Test
+    public void shouldSearchByNoValue() {
+        Product[] actual = productManager.searchBy("Носки");
+        Product[] expected = new Product[0];
+        assertArrayEquals(expected, actual, "Не найденное значение");
     }
 }
 ```
